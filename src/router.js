@@ -72,16 +72,21 @@ class Router {
     this.paths = []
     let prefix_tree = new Trie()
     for (const  i in router){
-      prefix_tree.insert(router[i]['path'].split('/').splice(1), 
+      let path_list = router[i]['path'].split('/').splice(1)
+      path_list.push(router[i]['method'])
+      prefix_tree.insert(path_list, 
                          router[i]['handler'],
                          router[i]['method'],
                          router[i]['constraints']);
       this.prefix_tree = prefix_tree;
     }
   }
-  serve(path){
+  serve(request){
+    const request_path = request['path']
+    const request_method = request['method']
     let ret = ""
-    let path_spited = path.split('/').splice(1)
+    let path_spited = request_path.split('/').splice(1)
+    path_spited.push(request_method)
     let prefix_tree = this.prefix_tree
     let found = false
     const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited)
@@ -100,6 +105,9 @@ class Router {
             found = false
           }
         }
+        if (request_method != method){
+          found = false
+        } 
         console.log(param);
         console.log(constraints[param.substring(1)]);
         console.log(typeof(constraints[param.substring(1)]));
@@ -108,7 +116,7 @@ class Router {
     if ( !found ) {
       return  new Error("Path not found");
     }
-    ret = {'path':path, 'handler':handler, 'method': method,'params':params };
+    ret = {'path':request_path, 'handler':handler, 'method': method,'params':params };
     return ret
   }
 }
