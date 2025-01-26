@@ -2,6 +2,10 @@
     "name": "@hexlet/code",
     "version": "0.0.3",
     "description": "Node.js test job",
+    "type": "module",
+    "bin": {
+      "nodejs-package": "bin/router.js"
+    },    
     "simple-git-hooks": {
       "pre-push": "npx lint-staged"
     },
@@ -11,8 +15,9 @@
     "scripts": {
       "test": "npx jest"
     },
-    "lint-staged": {
-      "*.js": "eslint --fix"
+    "dependencies": {
+      "debug": "^4.3.5",
+      "lodash": "^4.17.21"
     },
     "devDependencies": {
       "@eslint/eslintrc": "^3.1.0",
