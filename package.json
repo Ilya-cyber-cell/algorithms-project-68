@@ -1,10 +1,7 @@
 {
     "name": "@hexlet/code",
     "version": "0.0.3",
-    "description": "Node.js boilerplate package",
-    "bin": {
-      "nodejs-package": "bin/nodejs-package.js"
-    },
+    "description": "Node.js test job",
     "simple-git-hooks": {
       "pre-push": "npx lint-staged"
     },
@@ -13,21 +10,6 @@
     },
     "scripts": {
       "test": "npx jest"
-    },
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/hexlet-boilerplates/nodejs-package.git"
-    },
-    "author": "Kirill Mokevnin",
-    "license": "ISC",
-    "bugs": {
-      "url": "https://github.com/hexlet-boilerplates/nodejs-package/issues"
-    },
-    "type": "module",
-    "homepage": "https://github.com/hexlet-boilerplates/nodejs-package#readme",
-    "dependencies": {
-      "debug": "^4.3.5",
-      "lodash": "^4.17.21"
     },
     "lint-staged": {
       "*.js": "eslint --fix"
