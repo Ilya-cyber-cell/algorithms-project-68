@@ -4,6 +4,8 @@ class Trie {
       this.children = {};
       this.parent = parent;
       this.handler = ""
+      this.method = 'GET'
+      this.constraints = {}
       this.end = false;
   }
 
@@ -17,7 +19,7 @@ class Trie {
       }
       return output.join('');
   }
-  insert(path, handler) {
+  insert(path, handler, method, constraints) {
     let node = this;
     for (let i = 0; i < path.length; i++) {
         if (!node.children[path[i]]) {
@@ -27,6 +29,8 @@ class Trie {
         if (i === path.length - 1) {
             node.end = true;
             node.handler = handler
+            node.method = method
+            node.constraints = constraints
         }
     }
   }
@@ -34,6 +38,8 @@ class Trie {
     let node = this;
     let params = new Array()
     let handler = ""
+    let method = ""
+    let constraints = ""
     for (let i = 0; i < path.length; i++) {
         let param = -1
         for (let key in node.children){
@@ -47,11 +53,13 @@ class Trie {
         } else if( param != -1 ){
             node = node.children[param]
         } else {
-            return [false, params, handler];
+            return [false, params, handler,method];
         }
     }
-    handler = node.handler 
-    return [true, params, handler]
+    handler = node.handler;
+    method = node.method;
+    constraints = node.constraints;
+    return [node.end, params, handler, method, constraints]
   }  
 }
 
@@ -64,20 +72,43 @@ class Router {
     this.paths = []
     let prefix_tree = new Trie()
     for (const  i in router){
-      prefix_tree.insert(router[i]['path'].split('/').splice(1), router[i]['handler']);
+      prefix_tree.insert(router[i]['path'].split('/').splice(1), 
+                         router[i]['handler'],
+                         router[i]['method'],
+                         router[i]['constraints']);
       this.prefix_tree = prefix_tree;
     }
   }
   serve(path){
-    console.log("============")
     let ret = ""
     let path_spited = path.split('/').splice(1)
     let prefix_tree = this.prefix_tree
-    const [path_found, params, handler] =  prefix_tree.contains(path_spited)
-    if ( !path_found ) {
+    let found = false
+    const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited)
+    found = path_found
+    for (const param in  params){
+      const param_key = param.substring(1);
+      const param_value = params[param];
+      if (constraints[param_key]){
+        const param_filter = constraints[param_key];
+        if ( typeof(param_filter) == "function" ){
+          if (!param_filter(param_value)){
+            found = false
+          }
+        }else{
+          if ( !param_value.match(param_filter)) {
+            found = false
+          }
+        }
+        console.log(param);
+        console.log(constraints[param.substring(1)]);
+        console.log(typeof(constraints[param.substring(1)]));
+      }
+    }
+    if ( !found ) {
       return  new Error("Path not found");
     }
-    ret = {'path':path, 'handler':handler, 'params':params };
+    ret = {'path':path, 'handler':handler, 'method': method,'params':params };
     return ret
   }
 }
