@@ -20,6 +20,9 @@ class Trie {
       return output.join('');
   }
   insert(path, handler, method, constraints) {
+    if (path[0] == ""){
+      path = path.splice(1)
+    }
     let node = this;
     for (let i = 0; i < path.length; i++) {
         if (!node.children[path[i]]) {
@@ -53,7 +56,7 @@ class Trie {
         } else if( param != -1 ){
             node = node.children[param]
         } else {
-            return [false, params, handler,method];
+            return [false, params, handler,method, constraints];
         }
     }
     handler = node.handler;
@@ -72,7 +75,7 @@ class Router {
     this.paths = []
     let prefix_tree = new Trie()
     for (const  i in router){
-      let path_list = router[i]['path'].split('/').splice(1)
+      let path_list = router[i]['path'].split('/')
       path_list.push(router[i]['method'])
       prefix_tree.insert(path_list, 
                          router[i]['handler'],
@@ -85,7 +88,10 @@ class Router {
     const request_path = request['path']
     const request_method = request['method']
     let ret = ""
-    let path_spited = request_path.split('/').splice(1)
+    let path_spited = request_path.split('/')
+    if (path_spited[0] == ""){
+      path_spited = path_spited.splice(1)
+    }
     path_spited.push(request_method)
     let prefix_tree = this.prefix_tree
     let found = false
