@@ -27,6 +27,7 @@ class Trie {
       path = path.slice(0,-1)
     }
     path.push(method)
+    console.log(path)
     let node = this;
     for (let i = 0; i < path.length; i++) {
         if (!node.children[path[i]]) {
@@ -99,7 +100,8 @@ class Router {
     if (path_spited[path_spited.length-1] == ""){
       path_spited = path_spited.slice(0,-1)
     }
-    path_spited.push(request_method)
+    path_spited.push(request_method);
+    console.log(path_spited);
     let prefix_tree = this.prefix_tree
     let found = false
     const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited)
