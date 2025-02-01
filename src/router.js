@@ -149,28 +149,11 @@ class Router {
     let found = false
     const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited, request_method)
     found = path_found
-    for (const param in  params){
-      const param_key = param.substring(1);
-      const param_value = params[param];
-      if (constraints[param_key]){
-        const param_filter = constraints[param_key];
-        if ( typeof(param_filter) == "function" ){
-          if (!param_filter(param_value)){
-            found = false
-          }
-        }else{
-          if ( !param_value.match(param_filter)) {
-            found = false
-          }
-        }
-        console.log(param);
-        console.log(constraints[param.substring(1)]);
-        console.log(typeof(constraints[param.substring(1)]));
-      }
-    }
     if ( !found ) {
       return  new Error("Path not found");
     }
+    console.log(params);
+    console.log(handler);
     ret = {'path':request_path, 'handler':handler, 'method': method,'params':params };
     return ret
   }
