@@ -29,19 +29,49 @@ class Trie {
 //    console.log(path)
     let node = this;
     for (let i = 0; i < path.length; i++) {
-        if (!node.children[path[i]]) {
-            node.children[path[i]] = new Trie(path[i], node);
+        let corrent_world = path[i]
+        if (corrent_world[0] == ":"){
+          if (!node.children[corrent_world]) {
+            node.children[corrent_world] = new Trie(corrent_world, node);
+          }
+          node = node.children[corrent_world];
+          if (typeof method === 'undefined'){
+            corrent_world = "ALL"
+          } else {
+            corrent_world = method
+          }
         }
-        node = node.children[path[i]];
+        if (!node.children[corrent_world]) {
+            node.children[corrent_world] = new Trie(corrent_world, node);
+        }
+        node = node.children[corrent_world];
+        node.constraints = constraints;
         if (i === path.length - 1) {
           node.end = true;
           if (typeof method === 'undefined'){
               node.handler = handler;
-              node.constraints = constraints;
           } else {
               node.methods[method] = {"handler": handler, "constraints":constraints}
           }
         }
+    }
+  }
+  check_pathern(patherns, value, key){
+    const parma_key =  key.substring(1)
+    if (patherns[parma_key]){
+      const pathern = patherns[parma_key]
+      if ( typeof(pathern) == "function" ){
+        if (!pathern(value)){
+          return false
+        }
+      }else{
+        if ( !value.match(pathern)) {
+          return false
+        }
+      }
+      return true
+    }else{
+      return false
     }
   }
   contains(path, request_method) {
@@ -52,16 +82,24 @@ class Trie {
     let constraints = ""
     for (let i = 0; i < path.length; i++) {
         let param = -1
+        let node_parmas
         for (let key in node.children){
           if (key[0] == ":"){
-            param = key
-            params[key] = path[i]
+            for (let avaiable_method in node.children[key].children){
+
+              if (this.check_pathern(node.children[key].children[avaiable_method].constraints, path[i], key)){
+                console.log(avaiable_method)
+                param = avaiable_method
+                params[key] = path[i]
+                node_parmas = node.children[key]     
+              }
+            }
           }
         }
         if (node.children[path[i]] ) {
             node = node.children[path[i]];
         } else if( param != -1 ){
-            node = node.children[param]
+            node = node_parmas.children[param]
         } else {
             return [false, params, handler,method, constraints];
         }
