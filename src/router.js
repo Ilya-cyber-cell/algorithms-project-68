@@ -90,7 +90,7 @@ class Trie {
               if (this.check_pathern(node.children[key].children[avaiable_method].constraints, path[i], key)){
                 console.log(avaiable_method)
                 param = avaiable_method
-                params[key] = path[i]
+                params[key.substring(1)] = path[i]
                 node_parmas = node.children[key]     
               }
             }
