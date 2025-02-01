@@ -4,7 +4,7 @@ class Trie {
       this.children = {};
       this.parent = parent;
       this.handler = ""
-      this.method = 'GET'
+      this.methods = {}
       this.constraints = {}
       this.end = false;
   }
@@ -26,8 +26,7 @@ class Trie {
     if (path[path.length-1] == ""){
       path = path.slice(0,-1)
     }
-    path.push(method)
-    console.log(path)
+//    console.log(path)
     let node = this;
     for (let i = 0; i < path.length; i++) {
         if (!node.children[path[i]]) {
@@ -35,14 +34,17 @@ class Trie {
         }
         node = node.children[path[i]];
         if (i === path.length - 1) {
-            node.end = true;
-            node.handler = handler
-            node.method = method
-            node.constraints = constraints
+          node.end = true;
+          if (typeof method === 'undefined'){
+              node.handler = handler;
+              node.constraints = constraints;
+          } else {
+              node.methods[method] = {"handler": handler, "constraints":constraints}
+          }
         }
     }
   }
-  contains(path) {
+  contains(path, request_method) {
     let node = this;
     let params = new Array()
     let handler = ""
@@ -64,10 +66,14 @@ class Trie {
             return [false, params, handler,method, constraints];
         }
     }
-    handler = node.handler;
-    method = node.method;
-    constraints = node.constraints;
-    return [node.end, params, handler, method, constraints]
+    if (request_method in node.methods){
+      handler = node.methods[request_method].handler;
+      constraints = node.methods[request_method].constraints;
+    }else{
+      handler = node.handler;
+      constraints = node.constraints;
+    }
+    return [node.end, params, handler, request_method, constraints]
   }  
 }
 
@@ -100,11 +106,10 @@ class Router {
     if (path_spited[path_spited.length-1] == ""){
       path_spited = path_spited.slice(0,-1)
     }
-    path_spited.push(request_method);
     console.log(path_spited);
     let prefix_tree = this.prefix_tree
     let found = false
-    const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited)
+    const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited, request_method)
     found = path_found
     for (const param in  params){
       const param_key = param.substring(1);
@@ -120,9 +125,6 @@ class Router {
             found = false
           }
         }
-        if (request_method != method){
-          found = false
-        } 
         console.log(param);
         console.log(constraints[param.substring(1)]);
         console.log(typeof(constraints[param.substring(1)]));
@@ -136,9 +138,7 @@ class Router {
   }
 }
 
-function courses(){
-  console.log("33332211111");
-}
+
 
 export default (routers) => {
   const ret = new Router(routers);
