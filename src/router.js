@@ -179,7 +179,7 @@ class Router {
     const [path_found, params, handler] =  prefix_tree.contains(path_spited, request_method)
     found = path_found
     if ( !found ) {
-      return  new Error("Path not found");
+      return  new Error("no such path");
     }
     console.log(params);
     console.log(handler);
