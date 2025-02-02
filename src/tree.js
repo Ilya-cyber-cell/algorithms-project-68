@@ -44,10 +44,10 @@ class Trie {
       node = node.children[correntWorld];
       if (i === pathInFunction.length - 1) {
         node.end = true;
-        node.handlers.push({"method":method, 
-          "constraints": constraints, 
-          "handler":handler, 
-          "path": pathInFunction})
+        node.handlers.push({'method':method, 
+          'constraints': constraints, 
+          'handler':handler, 
+          'path': pathInFunction})
       }
     }
   }
@@ -55,7 +55,7 @@ class Trie {
     let found = true
     let params = new Array()
     for (let i = 0; i < path.length; i++){
-      if (handler.path[i][0] == ":"){
+      if (handler.path[i][0] === ':') {
         if (!this.check_pathern(handler.constraints,path[i],handler.path[i])){
           params[handler.path[i].substring(1)] = path[i]
           found = false
@@ -90,7 +90,7 @@ class Trie {
       return true
     }
   }
-  contains(path, request_method) {
+  contains(path, requestMethod) {
     let node = this;
     let childrens = []
     childrens.push(node)
@@ -118,12 +118,12 @@ class Trie {
         for (const handler_idx in  node.handlers){
           [found, params] = this.check_path(path, node.handlers[handler_idx])
           if (found){
-            if (node.handlers[handler_idx]['method'] === undefined){
-              allowed_methods['ALL'] = node.handlers[handler_idx]
-              allowed_methods['ALL']['params'] = params
+            if (node.handlers[handler_idx].method === undefined){
+              allowed_methods.ALL = node.handlers[handler_idx]
+              allowed_methods.ALL.params = params
             }else{
-              allowed_methods[node.handlers[handler_idx]['method']] = node.handlers[handler_idx]
-              allowed_methods[node.handlers[handler_idx]['method']]['params'] = params
+              allowed_methods[node.handlers[handler_idx].method] = node.handlers[handler_idx]
+              allowed_methods[node.handlers[handler_idx].method].params = params
             }
           }
         }
@@ -132,8 +132,8 @@ class Trie {
     }
     //    console.log(params)
     //    console.log("=============================")    
-    if (request_method in allowed_methods){
-      return  [true, allowed_methods[request_method]['params'], allowed_methods[request_method]['handler']]
+    if (requestMethod in allowed_methods){
+      return  [true, allowed_methods[requestMethod]['params'], allowed_methods[requestMethod]['handler']]
     }else if ('ALL' in allowed_methods){
       return  [true, allowed_methods['ALL']['params'], allowed_methods['ALL']['handler']];
     }else{

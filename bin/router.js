@@ -30,5 +30,5 @@ const routes = [
 ];
 const router = makeRouter(routes);
 
-const path = '/courses/js22222/exercises/5555';
-const handler = router.serve(path);
+const path = {'path':'/','method':'PUT'};
+router.serve(path);
