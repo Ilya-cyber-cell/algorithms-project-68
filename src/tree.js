@@ -15,6 +15,7 @@ class Trie {
       output.unshift(node.key);
       node = node.parent;
     }
+
     return output.join('');
   }
 
@@ -30,10 +31,10 @@ class Trie {
     let node = this;
     if (pathInFunction.length == 0){
       node.end = true;
-      node.handlers.push( { 'method':method, 
-        'constraints': constraints, 
-        'handler':handler, 
-        'path': pathInFunction 
+      node.handlers.push( {'method':method,
+        'constraints': constraints,
+        'handler': handler,
+        'path': pathInFunction
       })
     }
     for (let i = 0; i < pathInFunction.length; i++) {
@@ -44,19 +45,19 @@ class Trie {
       node = node.children[correntWorld];
       if (i === pathInFunction.length - 1) {
         node.end = true;
-        node.handlers.push({'method':method, 
-          'constraints': constraints, 
-          'handler':handler, 
-          'path': pathInFunction})
+        node.handlers.push({ 'method':method,
+          'constraints': constraints,
+          'handler':handler,
+          'path': pathInFunction })
       }
     }
   }
-  check_path(path, handler) {
+  checkPath(path, handler) {
     let found = true
     let params = new Array()
     for (let i = 0; i < path.length; i++){
       if (handler.path[i][0] === ':') {
-        if (!this.check_pathern(handler.constraints,path[i],handler.path[i])){
+        if (!this.checkPathern(handler.constraints,path[i],handler.path[i])){
           params[handler.path[i].substring(1)] = path[i]
           found = false
         }else{
@@ -64,14 +65,14 @@ class Trie {
         }
       }else{
         if (path[i] != handler.path[i] ){
-          found = false 
-        }   
+          found = false
+        }
       }
     }
-    
+
     return [found, params]
   }
-  check_pathern(patherns, value, key) {
+  checkPathern(patherns, value, key) {
     const parma_key =  key.substring(1)
     if ( (patherns !== undefined) && (patherns[parma_key])){
       const pathern = patherns[parma_key]
@@ -84,7 +85,7 @@ class Trie {
           return false
         }
       }
-      
+
       return true
     }else{
       return true
@@ -102,7 +103,7 @@ class Trie {
           childrens.push(node.children[path[i]])
         } else {
           for (let key in node.children){
-            if (key[0] == ":"){
+            if (key[0] == ':'){
               childrens.push( node.children[key])
             }
           }
@@ -116,7 +117,7 @@ class Trie {
       node = childrens[index]
       if (node.end){
         for (const handler_idx in  node.handlers){
-          [found, params] = this.check_path(path, node.handlers[handler_idx])
+          [found, params] = this.checkPath(path, node.handlers[handler_idx])
           if (found){
             if (node.handlers[handler_idx].method === undefined){
               allowed_methods.ALL = node.handlers[handler_idx]
@@ -131,7 +132,7 @@ class Trie {
       }
     }
     //    console.log(params)
-    //    console.log("=============================")    
+    //    console.log("=============================")
     if (requestMethod in allowed_methods){
       return  [true, allowed_methods[requestMethod]['params'], allowed_methods[requestMethod]['handler']]
     }else if ('ALL' in allowed_methods){

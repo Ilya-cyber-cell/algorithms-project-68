@@ -13,15 +13,13 @@ class Router {
     }
   }
   serve(request){
-//    console.log('=============================');
-//    console.log(request);
-    const request_path = request.path
-    if (request_path == '') {
+    const requestPath = request.path
+    if (requestPath == '') {
       throw 'no such path'
     }
     const requestMethod = request.method
     let ret = ''
-    let pathSpited = request_path.split('/')
+    let pathSpited = requestPath.split('/')
     if (pathSpited[0] === '') {
       pathSpited = pathSpited.splice(1)
     }
@@ -37,7 +35,7 @@ class Router {
     }
     console.log(params);
     console.log(handler);
-    ret = {'path':request_path, 'handler':handler, 'method': requestMethod,'params':params};
+    ret = {'path':requestPath, 'handler':handler, 'method': requestMethod,'params':params};
 
     return ret
   }
@@ -45,6 +43,6 @@ class Router {
 
 export default (routers) => {
   const ret = new Router(routers);
-  
+
   return ret;
 }
