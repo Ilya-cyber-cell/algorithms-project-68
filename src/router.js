@@ -20,15 +20,14 @@ class Router {
     }
     const requestMethod = request.method;
     let ret = '';
-    let pathSpited = requestPath.split('/');
+    const pathSpited = requestPath.split('/');
     if (pathSpited[0] === '') {
       pathSpited.shift();
     }
     if (pathSpited[pathSpited.length - 1] === '') {
       pathSpited.pop();
     }
-    const prefixTree = this.prefixTree;
-    const [found, params, handler] = prefixTree.contains(pathSpited, requestMethod);
+    const [found, params, handler] = this.prefixTree.contains(pathSpited, requestMethod);
     if ( !found ) {
       throw 'no such path';
     }
