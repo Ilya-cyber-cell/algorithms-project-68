@@ -171,6 +171,9 @@ class Router {
     console.log('=============================');
     console.log(request);
     const request_path = request['path']
+    if (request_path == ''){
+      throw "no such path"
+    }
     const request_method = request['method']
     let ret = ""
     let path_spited = request_path.split('/')
