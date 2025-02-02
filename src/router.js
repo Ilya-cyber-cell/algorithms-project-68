@@ -3,9 +3,7 @@ class Trie {
       this.key = key;
       this.children = {};
       this.parent = parent;
-      this.handler = ""
-      this.methods = {}
-      this.constraints = {}
+      this.handlers = []
       this.end = false;
   }
 
@@ -30,35 +28,45 @@ class Trie {
     let node = this;
     for (let i = 0; i < path.length; i++) {
         let corrent_world = path[i]
-        if (corrent_world[0] == ":"){
-          if (!node.children[corrent_world]) {
-            node.children[corrent_world] = new Trie(corrent_world, node);
-          }
-          node = node.children[corrent_world];
-          if (typeof method === 'undefined'){
-            corrent_world = "ALL"
-          } else {
-            corrent_world = method
-          }
-        }
         if (!node.children[corrent_world]) {
             node.children[corrent_world] = new Trie(corrent_world, node);
         }
         node = node.children[corrent_world];
-        node.constraints = constraints;
+        if (corrent_world[0] == ":"){
+
+        }
         if (i === path.length - 1) {
           node.end = true;
-          if (typeof method === 'undefined'){
-              node.handler = handler;
-          } else {
-              node.methods[method] = {"handler": handler, "constraints":constraints}
-          }
+          node.handlers.push({"method":method, 
+            "constraints": constraints, 
+            "handler":handler, 
+            "path": path})
         }
     }
   }
+  check_path(path, handler){
+    let found = true
+    let params = Array()
+    for (let i = 0; i < path.length; i++){
+      if (handler.path[i][0] == ":"){
+        if (!this.check_pathern(handler.constraints,path[i],handler.path[i])){
+            params[handler.path[i].substring(1)] = path[i]
+            found = false
+        }else{
+          params[handler.path[i].substring(1)] = path[i]
+        }
+      }else{
+        if (path[i] != handler.path[i] ){
+          found = false
+        }   
+      }
+    }
+    return [found, params]
+
+  }
   check_pathern(patherns, value, key){
     const parma_key =  key.substring(1)
-    if (patherns[parma_key]){
+    if ( (patherns !== undefined) && (patherns[parma_key])){
       const pathern = patherns[parma_key]
       if ( typeof(pathern) == "function" ){
         if (!pathern(value)){
@@ -71,48 +79,62 @@ class Trie {
       }
       return true
     }else{
-      return false
+      return true
     }
   }
   contains(path, request_method) {
     let node = this;
-    let params = new Array()
-    let handler = ""
-    let method = ""
-    let constraints = ""
+    let childrens = []
+    childrens.push(node)
     for (let i = 0; i < path.length; i++) {
-        let param = -1
-        let node_parmas
-        for (let key in node.children){
-          if (key[0] == ":"){
-            for (let avaiable_method in node.children[key].children){
-
-              if (this.check_pathern(node.children[key].children[avaiable_method].constraints, path[i], key)){
-                console.log(avaiable_method)
-                param = avaiable_method
-                params[key.substring(1)] = path[i]
-                node_parmas = node.children[key]     
+        const childrens_length = childrens.length
+        console.log("path : " +  path[i])
+        for (let j = 0; j < childrens_length; j++){
+            node = childrens.pop(0)
+            if (node.children[path[i]] ) {
+              console.log(path[i])
+              childrens.push(node.children[path[i]])
+            } else {
+                for (let key in node.children){
+                    if (key[0] == ":"){
+                        console.log(key)
+                        childrens.push( node.children[key])
+                    }
+                }
+            }
+        }
+    }
+    let allowed_methods = Array()
+    let found = false
+    let params = Array()
+    for (let index in childrens){
+        node = childrens[index]
+        if (node.end){
+          for (const handler_idx in  node.handlers){
+            [found, params] = this.check_path(path, node.handlers[handler_idx])
+            if (found){
+              if (node.handlers[handler_idx]['method'] === undefined){
+                allowed_methods['ALL'] = node.handlers[handler_idx]
+                allowed_methods['ALL']['params'] = params
+              }else{
+                allowed_methods[node.handlers[handler_idx]['method']] = node.handlers[handler_idx]
+                allowed_methods[node.handlers[handler_idx]['method']]['params'] = params
               }
             }
           }
-        }
-        if (node.children[path[i]] ) {
-            node = node.children[path[i]];
-        } else if( param != -1 ){
-            node = node_parmas.children[param]
-        } else {
-            return [false, params, handler,method, constraints];
+
         }
     }
-    if (request_method in node.methods){
-      handler = node.methods[request_method].handler;
-      constraints = node.methods[request_method].constraints;
+    console.log(params)
+    console.log("=============================")    
+    if (request_method in allowed_methods){
+      return  [true, allowed_methods[request_method]['params'], allowed_methods[request_method]['handler']]
+    }else if ('ALL' in allowed_methods){
+      return  [true, allowed_methods['ALL']['params'], allowed_methods['ALL']['handler']];
     }else{
-      handler = node.handler;
-      constraints = node.constraints;
+      return [false];
     }
-    return [node.end, params, handler, request_method, constraints]
-  }  
+  }
 }
 
 class Router {
@@ -147,14 +169,14 @@ class Router {
     console.log(path_spited);
     let prefix_tree = this.prefix_tree
     let found = false
-    const [path_found, params, handler, method, constraints] =  prefix_tree.contains(path_spited, request_method)
+    const [path_found, params, handler] =  prefix_tree.contains(path_spited, request_method)
     found = path_found
     if ( !found ) {
       return  new Error("Path not found");
     }
     console.log(params);
     console.log(handler);
-    ret = {'path':request_path, 'handler':handler, 'method': method,'params':params };
+    ret = {'path':request_path, 'handler':handler, 'method': request_method,'params':params };
     return ret
   }
 }
