@@ -26,6 +26,13 @@ class Trie {
     }
 //    console.log(path)
     let node = this;
+    if (path.length == 0){
+      node.end = true;
+      node.handlers.push({"method":method, 
+        "constraints": constraints, 
+        "handler":handler, 
+        "path": path})
+    }
     for (let i = 0; i < path.length; i++) {
         let corrent_world = path[i]
         if (!node.children[corrent_world]) {
