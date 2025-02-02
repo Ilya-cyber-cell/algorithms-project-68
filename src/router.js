@@ -1,3 +1,4 @@
+
 class Trie {
   constructor(key, parent = null) {
     this.key = key;
@@ -15,6 +16,7 @@ class Trie {
       output.unshift(node.key);
       node = node.parent;
     }
+    
     return output.join('');
   }
   insert(path, handler, method, constraints) {
@@ -24,7 +26,7 @@ class Trie {
     if (path[path.length-1] == ""){
       path = path.slice(0,-1)
     }
-//    console.log(path)
+    //    console.log(path)
     let node = this;
     if (path.length == 0){
       node.end = true;
@@ -65,6 +67,7 @@ class Trie {
         }   
       }
     }
+    
     return [found, params]
   }
   check_pathern(patherns, value, key){
@@ -80,6 +83,7 @@ class Trie {
           return false
         }
       }
+      
       return true
     }else{
       return true
@@ -125,8 +129,8 @@ class Trie {
 
       }
     }
-//    console.log(params)
-//    console.log("=============================")    
+    //    console.log(params)
+    //    console.log("=============================")    
     if (request_method in allowed_methods){
       return  [true, allowed_methods[request_method]['params'], allowed_methods[request_method]['handler']]
     }else if ('ALL' in allowed_methods){
@@ -138,20 +142,15 @@ class Trie {
 }
 
 class Router {
-  router;
-  paths;
-  prefix_tree;
   constructor(router) {
-    this.router = []
-    this.paths = []
     let prefix_tree = new Trie()
     for (const  i in router){
       console.log(router[i])
       let path_list = router[i]['path'].split('/')
       prefix_tree.insert(path_list, 
-                         router[i]['handler'],
-                         router[i]['method'],
-                         router[i]['constraints']);
+        router[i]['handler'],
+        router[i]['method'],
+        router[i]['constraints']);
       this.prefix_tree = prefix_tree;
     }
   }
@@ -181,7 +180,8 @@ class Router {
     }
     console.log(params);
     console.log(handler);
-    ret = {'path':request_path, 'handler':handler, 'method': request_method,'params':params };
+    ret = {'path':request_path, 'handler':handler, 'method': request_method,'params':params};
+    
     return ret
   }
 }
@@ -190,6 +190,7 @@ class Router {
 
 export default (routers) => {
   const ret = new Router(routers);
+  
   return ret;
 }
 
