@@ -29,7 +29,7 @@ class Trie {
     }
     //    console.log(path)
     let node = this;
-    if (pathInFunction.length == 0){
+    if (pathInFunction.length === 0){
       node.end = true;
       node.handlers.push( {'method':method,
         'constraints': constraints,
@@ -93,13 +93,13 @@ class Trie {
   }
   contains(path, requestMethod) {
     let node = this;
-    let childrens = []
+    const childrens = []
     childrens.push(node)
     for (let i = 0; i < path.length; i++) {
-      const childrens_length = childrens.length
-      for (let j = 0; j < childrens_length; j++){
+      const childrensLength = childrens.length
+      for (let j = 0; j < childrensLength; j++){
         node = childrens.pop(0)
-        if (node.children[path[i]] ) {
+        if (node.children[path[i]]) {
           childrens.push(node.children[path[i]])
         } else {
           for (let key in node.children){
@@ -110,34 +110,33 @@ class Trie {
         }
       }
     }
-    let allowed_methods = Array()
+    let allowedMethods = {}
     let found = false
-    let params = Array()
+    let params = {}
     for (let index in childrens){
       node = childrens[index]
       if (node.end){
-        for (const handler_idx in  node.handlers){
-          [found, params] = this.checkPath(path, node.handlers[handler_idx])
+        for (const handlerIdx in  node.handlers){
+          [found, params] = this.checkPath(path, node.handlers[handlerIdx])
           if (found){
-            if (node.handlers[handler_idx].method === undefined){
-              allowed_methods.ALL = node.handlers[handler_idx]
-              allowed_methods.ALL.params = params
-            }else{
-              allowed_methods[node.handlers[handler_idx].method] = node.handlers[handler_idx]
-              allowed_methods[node.handlers[handler_idx].method].params = params
+            if (node.handlers[handlerIdx].method === undefined){
+              allowedMethods.ALL = node.handlers[handlerIdx]
+              allowedMethods.ALL.params = params
+            } else {
+              allowedMethods[node.handlers[handlerIdx].method] = node.handlers[handlerIdx]
+              allowedMethods[node.handlers[handlerIdx].method].params = params
             }
           }
         }
-
       }
     }
     //    console.log(params)
     //    console.log("=============================")
-    if (requestMethod in allowed_methods){
-      return  [true, allowed_methods[requestMethod]['params'], allowed_methods[requestMethod]['handler']]
-    }else if ('ALL' in allowed_methods){
-      return  [true, allowed_methods['ALL']['params'], allowed_methods['ALL']['handler']];
-    }else{
+    if (requestMethod in allowedMethods){
+      return [true, allowedMethods[requestMethod].params, allowedMethods[requestMethod].handler]
+    } else if ('ALL' in allowedMethods){
+      return [true, allowedMethods.ALL.params, allowedMethods.ALL.handler];
+    } else {
       return [false];
     }
   }
