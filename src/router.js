@@ -100,11 +100,11 @@ class Trie {
     childrens.push(node)
     for (let i = 0; i < path.length; i++) {
         const childrens_length = childrens.length
-        console.log("path : " +  path[i])
+//        console.log("path : " +  path[i])
         for (let j = 0; j < childrens_length; j++){
             node = childrens.pop(0)
             if (node.children[path[i]] ) {
-              console.log(path[i])
+//              console.log(path[i])
               childrens.push(node.children[path[i]])
             } else {
                 for (let key in node.children){
@@ -184,6 +184,7 @@ class Router {
     const [path_found, params, handler] =  prefix_tree.contains(path_spited, request_method)
     found = path_found
     if ( !found ) {
+      console.log("no such path");
 //      return  new Error("no such path");
 //      throw new PathNotFoundException("no such path")
       throw "no such path"
