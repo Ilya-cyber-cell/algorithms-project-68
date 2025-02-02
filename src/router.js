@@ -1,3 +1,8 @@
+function PathNotFoundException(message) {
+  this.message = message;
+  this.name = "no such path";
+}
+
 class Trie {
   constructor(key, parent = null) {
       this.key = key;
@@ -179,7 +184,8 @@ class Router {
     const [path_found, params, handler] =  prefix_tree.contains(path_spited, request_method)
     found = path_found
     if ( !found ) {
-      return  new Error("no such path");
+//      return  new Error("no such path");
+      throw new PathNotFoundException("no such path")
     }
     console.log(params);
     console.log(handler);
