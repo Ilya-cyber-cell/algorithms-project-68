@@ -185,7 +185,8 @@ class Router {
     found = path_found
     if ( !found ) {
 //      return  new Error("no such path");
-      throw new PathNotFoundException("no such path")
+//      throw new PathNotFoundException("no such path")
+      throw "no such path"
     }
     console.log(params);
     console.log(handler);
