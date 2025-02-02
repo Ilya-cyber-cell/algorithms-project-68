@@ -31,10 +31,10 @@ class Trie {
     let node = this;
     if (pathInFunction.length === 0){
       node.end = true;
-      node.handlers.push( {'method':method,
+      node.handlers.push( { 'method':method,
         'constraints': constraints,
         'handler': handler,
-        'path': pathInFunction
+        'path': pathInFunction,
       })
     }
     for (let i = 0; i < pathInFunction.length; i++) {
@@ -45,10 +45,11 @@ class Trie {
       node = node.children[correntWorld];
       if (i === pathInFunction.length - 1) {
         node.end = true;
-        node.handlers.push({ 'method':method,
+        node.handlers.push({ 
+          'method':method,
           'constraints': constraints,
           'handler':handler,
-          'path': pathInFunction })
+          'path': pathInFunction,})
       }
     }
   }
@@ -57,14 +58,14 @@ class Trie {
     let params = new Array()
     for (let i = 0; i < path.length; i++){
       if (handler.path[i][0] === ':') {
-        if (!this.checkPathern(handler.constraints,path[i],handler.path[i])){
+        if (!this.checkPathern(handler.constraints, path[i], handler.path[i])) {
           params[handler.path[i].substring(1)] = path[i]
           found = false
         }else{
           params[handler.path[i].substring(1)] = path[i]
         }
       }else{
-        if (path[i] != handler.path[i] ){
+        if (path[i] !== handler.path[i] ) {
           found = false
         }
       }
@@ -73,10 +74,10 @@ class Trie {
     return [found, params]
   }
   checkPathern(patherns, value, key) {
-    const parma_key =  key.substring(1)
-    if ( (patherns !== undefined) && (patherns[parma_key])){
+    const parma_key = key.substring(1)
+    if ( (patherns !== undefined) && (patherns[parma_key])) {
       const pathern = patherns[parma_key]
-      if ( typeof(pathern) === 'function' ){
+      if ( typeof (pathern) === 'function' ) {
         if (!pathern(value)){
           return false
         }
@@ -91,6 +92,7 @@ class Trie {
       return true
     }
   }
+
   contains(path, requestMethod) {
     let node = this;
     const childrens = []
@@ -102,7 +104,7 @@ class Trie {
         if (node.children[path[i]]) {
           childrens.push(node.children[path[i]])
         } else {
-          for (let key in node.children){
+          for (let key in Object.keys(node.children)){
             if (key[0] == ':'){
               childrens.push( node.children[key])
             }
@@ -113,13 +115,13 @@ class Trie {
     let allowedMethods = {}
     let found = false
     let params = {}
-    for (let index in childrens){
+    for (let index in Object.keys(childrens)){
       node = childrens[index]
       if (node.end){
-        for (const handlerIdx in  node.handlers){
+        for (const handlerIdx in  Object.keys(node.handlers)) {
           [found, params] = this.checkPath(path, node.handlers[handlerIdx])
           if (found){
-            if (node.handlers[handlerIdx].method === undefined){
+            if (node.handlers[handlerIdx].method === undefined) {
               allowedMethods.ALL = node.handlers[handlerIdx]
               allowedMethods.ALL.params = params
             } else {
@@ -132,9 +134,9 @@ class Trie {
     }
     //    console.log(params)
     //    console.log("=============================")
-    if (requestMethod in allowedMethods){
+    if (requestMethod in allowedMethods) {
       return [true, allowedMethods[requestMethod].params, allowedMethods[requestMethod].handler]
-    } else if ('ALL' in allowedMethods){
+    } else if ('ALL' in allowedMethods) {
       return [true, allowedMethods.ALL.params, allowedMethods.ALL.handler];
     } else {
       return [false];

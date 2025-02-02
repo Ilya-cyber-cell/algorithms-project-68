@@ -14,7 +14,7 @@ class Router {
   }
   serve(request){
     const requestPath = request.path
-    if (requestPath == '') {
+    if (requestPath === '') {
       throw 'no such path'
     }
     const requestMethod = request.method
@@ -23,10 +23,10 @@ class Router {
     if (pathSpited[0] === '') {
       pathSpited = pathSpited.splice(1)
     }
-    if (pathSpited[pathSpited.length-1] === '') {
+    if (pathSpited[pathSpited.length - 1] === '') {
       pathSpited = pathSpited.slice(0,-1)
     }
-    let prefixTree = this.prefixTree
+    const prefixTree = this.prefixTree
     let found = false
     const [path_found, params, handler] =  prefixTree.contains(pathSpited, requestMethod)
     found = path_found
