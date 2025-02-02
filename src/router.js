@@ -109,7 +109,7 @@ class Trie {
             } else {
                 for (let key in node.children){
                     if (key[0] == ":"){
-                        console.log(key)
+//                        console.log(key)
                         childrens.push( node.children[key])
                     }
                 }
@@ -137,8 +137,8 @@ class Trie {
 
         }
     }
-    console.log(params)
-    console.log("=============================")    
+//    console.log(params)
+//    console.log("=============================")    
     if (request_method in allowed_methods){
       return  [true, allowed_methods[request_method]['params'], allowed_methods[request_method]['handler']]
     }else if ('ALL' in allowed_methods){
@@ -168,6 +168,8 @@ class Router {
     }
   }
   serve(request){
+    console.log('=============================');
+    console.log(request);
     const request_path = request['path']
     const request_method = request['method']
     let ret = ""
@@ -178,7 +180,6 @@ class Router {
     if (path_spited[path_spited.length-1] == ""){
       path_spited = path_spited.slice(0,-1)
     }
-    console.log(path_spited);
     let prefix_tree = this.prefix_tree
     let found = false
     const [path_found, params, handler] =  prefix_tree.contains(path_spited, request_method)
