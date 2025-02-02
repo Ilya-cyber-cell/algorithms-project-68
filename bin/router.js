@@ -12,7 +12,7 @@ const routes = [
   {
     method: 'POST',
     path: '/courses/:course_id/exercises/:id',
-    constraints: {id: /\d+/, course_id: (courseId) => courseId.startsWith('js')},
+    constraints: { id: /\d+/, course_id: (courseId) => courseId.startsWith('js') },
     handler: () => 'exercise!',
   },
   {
@@ -26,11 +26,9 @@ const routes = [
     path: '/courses/11111/exercises/:id',
     constraints: { },
     handler: () => 'exercise!',
-  },    
+  },
 ];
 const router = makeRouter(routes);
 
 const path = '/courses/js22222/exercises/5555';
 const handler = router.serve(path);
-console.log(handler);
-
