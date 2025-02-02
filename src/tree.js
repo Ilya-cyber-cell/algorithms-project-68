@@ -104,8 +104,8 @@ class Trie {
         if (node.children[path[i]]) {
           childrens.push(node.children[path[i]])
         } else {
-          for (let key in Object.keys(node.children)){
-            if (key[0] == ':'){
+          for (let key in node.children){
+            if (key[0] === ':'){
               childrens.push( node.children[key])
             }
           }
