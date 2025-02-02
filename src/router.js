@@ -1,26 +1,21 @@
-function PathNotFoundException(message) {
-  this.message = message;
-  this.name = "no such path";
-}
-
 class Trie {
   constructor(key, parent = null) {
-      this.key = key;
-      this.children = {};
-      this.parent = parent;
-      this.handlers = []
-      this.end = false;
+    this.key = key;
+    this.children = {};
+    this.parent = parent;
+    this.handlers = []
+    this.end = false;
   }
 
   getWord() {
-      let output = [];
-      let node = this;
+    let output = [];
+    let node = this;
 
-      while (node !== null) {
-          output.unshift(node.key);
-          node = node.parent;
-      }
-      return output.join('');
+    while (node !== null) {
+      output.unshift(node.key);
+      node = node.parent;
+    }
+    return output.join('');
   }
   insert(path, handler, method, constraints) {
     if (path[0] == ""){
@@ -39,21 +34,18 @@ class Trie {
         "path": path})
     }
     for (let i = 0; i < path.length; i++) {
-        let corrent_world = path[i]
-        if (!node.children[corrent_world]) {
-            node.children[corrent_world] = new Trie(corrent_world, node);
-        }
-        node = node.children[corrent_world];
-        if (corrent_world[0] == ":"){
-
-        }
-        if (i === path.length - 1) {
-          node.end = true;
-          node.handlers.push({"method":method, 
-            "constraints": constraints, 
-            "handler":handler, 
-            "path": path})
-        }
+      let corrent_world = path[i]
+      if (!node.children[corrent_world]) {
+        node.children[corrent_world] = new Trie(corrent_world, node);
+      }
+      node = node.children[corrent_world];
+      if (i === path.length - 1) {
+        node.end = true;
+        node.handlers.push({"method":method, 
+          "constraints": constraints, 
+          "handler":handler, 
+          "path": path})
+      }
     }
   }
   check_path(path, handler){
@@ -62,8 +54,8 @@ class Trie {
     for (let i = 0; i < path.length; i++){
       if (handler.path[i][0] == ":"){
         if (!this.check_pathern(handler.constraints,path[i],handler.path[i])){
-            params[handler.path[i].substring(1)] = path[i]
-            found = false
+          params[handler.path[i].substring(1)] = path[i]
+          found = false
         }else{
           params[handler.path[i].substring(1)] = path[i]
         }
@@ -74,7 +66,6 @@ class Trie {
       }
     }
     return [found, params]
-
   }
   check_pathern(patherns, value, key){
     const parma_key =  key.substring(1)
@@ -99,43 +90,40 @@ class Trie {
     let childrens = []
     childrens.push(node)
     for (let i = 0; i < path.length; i++) {
-        const childrens_length = childrens.length
-//        console.log("path : " +  path[i])
-        for (let j = 0; j < childrens_length; j++){
-            node = childrens.pop(0)
-            if (node.children[path[i]] ) {
-//              console.log(path[i])
-              childrens.push(node.children[path[i]])
-            } else {
-                for (let key in node.children){
-                    if (key[0] == ":"){
-//                        console.log(key)
-                        childrens.push( node.children[key])
-                    }
-                }
+      const childrens_length = childrens.length
+      for (let j = 0; j < childrens_length; j++){
+        node = childrens.pop(0)
+        if (node.children[path[i]] ) {
+          childrens.push(node.children[path[i]])
+        } else {
+          for (let key in node.children){
+            if (key[0] == ":"){
+              childrens.push( node.children[key])
             }
+          }
         }
+      }
     }
     let allowed_methods = Array()
     let found = false
     let params = Array()
     for (let index in childrens){
-        node = childrens[index]
-        if (node.end){
-          for (const handler_idx in  node.handlers){
-            [found, params] = this.check_path(path, node.handlers[handler_idx])
-            if (found){
-              if (node.handlers[handler_idx]['method'] === undefined){
-                allowed_methods['ALL'] = node.handlers[handler_idx]
-                allowed_methods['ALL']['params'] = params
-              }else{
-                allowed_methods[node.handlers[handler_idx]['method']] = node.handlers[handler_idx]
-                allowed_methods[node.handlers[handler_idx]['method']]['params'] = params
-              }
+      node = childrens[index]
+      if (node.end){
+        for (const handler_idx in  node.handlers){
+          [found, params] = this.check_path(path, node.handlers[handler_idx])
+          if (found){
+            if (node.handlers[handler_idx]['method'] === undefined){
+              allowed_methods['ALL'] = node.handlers[handler_idx]
+              allowed_methods['ALL']['params'] = params
+            }else{
+              allowed_methods[node.handlers[handler_idx]['method']] = node.handlers[handler_idx]
+              allowed_methods[node.handlers[handler_idx]['method']]['params'] = params
             }
           }
-
         }
+
+      }
     }
 //    console.log(params)
 //    console.log("=============================")    
@@ -189,8 +177,6 @@ class Router {
     found = path_found
     if ( !found ) {
       console.log("no such path");
-//      return  new Error("no such path");
-//      throw new PathNotFoundException("no such path")
       throw "no such path"
     }
     console.log(params);
