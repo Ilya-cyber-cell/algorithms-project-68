@@ -2,9 +2,9 @@ import Trie from './tree.js';
 
 class Router {
   constructor(router) {
-    const prefixTree = new Trie()
-    for (let i = 0; i < router.length; i++){
-      const pathList = router[i].path.split('/')
+    const prefixTree = new Trie();
+    for (let i = 0; i < router.length; i++) {
+      const pathList = router[i].path.split('/');
       prefixTree.insert(pathList,
         router[i].handler,
         router[i].method,
@@ -22,10 +22,10 @@ class Router {
     let ret = '';
     let pathSpited = requestPath.split('/');
     if (pathSpited[0] === '') {
-      pathSpited = pathSpited.splice(1);
+      pathSpited.shift();
     }
     if (pathSpited[pathSpited.length - 1] === '') {
-      pathSpited = pathSpited.slice(0, -1);
+      pathSpited.pop();
     }
     const prefixTree = this.prefixTree;
     const [found, params, handler] = prefixTree.contains(pathSpited, requestMethod);

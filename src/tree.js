@@ -22,10 +22,10 @@ class Trie {
   insert(path, handler, method, constraints) {
     let pathInFunction = path
     if (pathInFunction[0] === '') {
-      pathInFunction = pathInFunction.splice(1)
+      pathInFunction.shift()
     }
     if (path[path.length - 1] === '') {
-      pathInFunction = pathInFunction.slice(0, -1)
+      pathInFunction.pop()
     }
     //    console.log(path)
     let node = this;
