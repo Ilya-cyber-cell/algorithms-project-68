@@ -30,5 +30,5 @@ const routes = [
 ];
 const router = makeRouter(routes);
 
-const path = {'path':'/','method':'PUT'};
+const path = { 'path': '/', 'method': 'PUT' };
 router.serve(path);
