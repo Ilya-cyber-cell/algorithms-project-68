@@ -104,10 +104,8 @@ class Trie {
           childrens.push(node.children[path[i]]);
         } else {
           for (const key in node.children) {
-            if (Object.hasOwn(node.children, key)) {
-              if (key[0] === ':') {
-                childrens.push(node.children[key]);
-              }
+            if (key[0] === ':') {
+              childrens.push(node.children[key]);
             }
           }
         }
