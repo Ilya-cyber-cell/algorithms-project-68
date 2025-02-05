@@ -122,11 +122,11 @@ class Trie {
     let found = false;
     let params = {};
     // for (const index in Object.keys(childrens)) {
-    Object.values(childrens).forEach((node) => {
+    Object.values(childrens).forEach((nodeForFilter) => {
       // node = childrens[index];
-      if (node.end) {
+      if (nodeForFilter.end) {
         // for (const handlerIdx in Object.keys(node.handlers)) {
-        Object.values(node.handlers).forEach((handler) => {
+        Object.values(nodeForFilter.handlers).forEach((handler) => {
           [found, params] = this.checkPath(path, handler);
           if (found) {
             if (handler.method === undefined) {
