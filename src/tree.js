@@ -32,10 +32,10 @@ class Trie {
     if (pathInFunction.length === 0) {
       node.end = true;
       node.handlers.push( {
-        'method': method,
-        'constraints': constraints,
-        'handler': handler,
-        'path': pathInFunction,
+        method: method,
+        constraints: constraints,
+        handler: handler,
+        path: pathInFunction,
       });
     }
     for (let i = 0; i < pathInFunction.length; i += 1) {
@@ -47,10 +47,10 @@ class Trie {
       if (i === pathInFunction.length - 1) {
         node.end = true;
         node.handlers.push({
-          'method': method,
-          'constraints': constraints,
-          'handler': handler,
-          'path': pathInFunction,
+          method: method,
+          constraints: constraints,
+          handler: handler,
+          path: pathInFunction,
         });
       }
     }
@@ -88,9 +88,8 @@ class Trie {
       }
 
       return true;
-    } else {
-      return true;
     }
+    return true;
   }
 
   contains(path, requestMethod) {
@@ -138,9 +137,8 @@ class Trie {
       return [true, allowedMethods[requestMethod].params, allowedMethods[requestMethod].handler];
     } else if ('ALL' in allowedMethods) {
       return [true, allowedMethods.ALL.params, allowedMethods.ALL.handler];
-    } else {
-      return [false];
     }
+    return [false];
   }
 }
 

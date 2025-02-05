@@ -3,7 +3,7 @@ import Trie from './tree.js';
 class Router {
   constructor(router) {
     const prefixTree = new Trie();
-    for (let i = 0; i < router.length; i++) {
+    for (let i = 0; i < router.length; i += 1) {
       const pathList = router[i].path.split('/');
       prefixTree.insert(pathList,
         router[i].handler,
@@ -28,15 +28,19 @@ class Router {
       pathSpited.pop();
     }
     const [found, params, handler] = this.prefixTree.contains(pathSpited, requestMethod);
-    if ( !found ) {
+    if (!found) {
       throw 'no such path';
     }
-    console.log(params);
-    console.log(handler);
-    ret = { 'path': requestPath, 'handler': handler, 'method': requestMethod, 'params': params };
-
+    //console.log(params);
+    //console.log(handler);
+    ret = {
+      path: requestPath,
+      handler: handler,
+      method: requestMethod,
+      params: params
+    };
     return ret;
-  }
+  };
 };
 
 export default (routers) => {
