@@ -16,7 +16,7 @@ class Router {
   serve(request) {
     const requestPath = request.path;
     if (requestPath === '') {
-      throw 'no such path';
+      throw new Error('no such path');
     }
     const requestMethod = request.method;
     let ret = '';
@@ -29,19 +29,19 @@ class Router {
     }
     const [found, params, handler] = this.prefixTree.contains(pathSpited, requestMethod);
     if (!found) {
-      throw 'no such path';
+      throw new Error('no such path');
     }
-    //console.log(params);
-    //console.log(handler);
+    // console.log(params);
+    // console.log(handler);
     ret = {
       path: requestPath,
-      handler: handler,
+      handler,
       method: requestMethod,
-      params: params
+      params,
     };
     return ret;
-  };
-};
+  }
+}
 
 export default (routers) => {
   const ret = new Router(routers);
