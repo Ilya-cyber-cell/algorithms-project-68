@@ -108,10 +108,11 @@ class Trie {
           //   if (key[0] === ':') {
           //     childrens.push(node.children[key]);
           // }
-          Object.keys(node.children).forEach((key) => {
-            const children = node.children[key]
+          Object.entries(node.children).forEach((entri) => {
+            const key = entri[0];
+            const keyValue = entri[1];
             if (key[0] === ':') {
-              childrens.push(children);
+              childrens.push(keyValue);
             }
           });
         }
