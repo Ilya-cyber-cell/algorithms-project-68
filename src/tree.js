@@ -31,10 +31,10 @@ class Trie {
     let node = this;
     if (pathInFunction.length === 0) {
       node.end = true;
-      node.handlers.push( {
-        method: method,
-        constraints: constraints,
-        handler: handler,
+      node.handlers.push({
+        method,
+        constraints,
+        handler,
         path: pathInFunction,
       });
     }
@@ -47,9 +47,9 @@ class Trie {
       if (i === pathInFunction.length - 1) {
         node.end = true;
         node.handlers.push({
-          method: method,
-          constraints: constraints,
-          handler: handler,
+          method,
+          constraints,
+          handler,
           path: pathInFunction,
         });
       }
@@ -104,8 +104,10 @@ class Trie {
           childrens.push(node.children[path[i]]);
         } else {
           for (const key in node.children) {
-            if (key[0] === ':') {
-              childrens.push(node.children[key]);
+            if (Object.hasOwn(node.children, key)) {
+              if (key[0] === ':') {
+                childrens.push(node.children[key]);
+              }
             }
           }
         }
@@ -135,7 +137,8 @@ class Trie {
     //    console.log("=============================")
     if (requestMethod in allowedMethods) {
       return [true, allowedMethods[requestMethod].params, allowedMethods[requestMethod].handler];
-    } else if ('ALL' in allowedMethods) {
+    } 
+    if ('ALL' in allowedMethods) {
       return [true, allowedMethods.ALL.params, allowedMethods.ALL.handler];
     }
     return [false];
