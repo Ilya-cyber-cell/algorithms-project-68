@@ -76,6 +76,7 @@ class Trie {
   }
 
   checkPathern(patherns, value, key) {
+    this.checkPathernRun = true
     const parmaKey = key.substring(1);
     if ((patherns !== undefined) && (patherns[parmaKey])) {
       const pathern = patherns[parmaKey];
@@ -103,14 +104,14 @@ class Trie {
         if (node.children[path[i]]) {
           childrens.push(node.children[path[i]]);
         } else {
-          //for (const key in node.children) {
-          //  if (key[0] === ':') {
-          //    childrens.push(node.children[key]);
-          //  }
-          Object.keys(node.children).forEach(function(key) {
+          // for (const key in node.children) {
+          //   if (key[0] === ':') {
+          //     childrens.push(node.children[key]);
+          // }
+          Object.keys(node.children).forEach((key) => {
             if (key[0] === ':') {
               childrens.push(node.children[key]);
-            }       
+            }
           })
         }
       }
