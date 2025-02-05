@@ -121,28 +121,30 @@ class Trie {
     const allowedMethods = {};
     let found = false;
     let params = {};
-    for (const index in Object.keys(childrens)) {
-      node = childrens[index];
+    // for (const index in Object.keys(childrens)) {
+    Object.values(childrens).forEach((node) => {
+      // node = childrens[index];
       if (node.end) {
-        for (const handlerIdx in Object.keys(node.handlers)) {
-          [found, params] = this.checkPath(path, node.handlers[handlerIdx]);
+        // for (const handlerIdx in Object.keys(node.handlers)) {
+        Object.values(node.handlers).forEach((handler) => {
+          [found, params] = this.checkPath(path, handler);
           if (found) {
-            if (node.handlers[handlerIdx].method === undefined) {
-              allowedMethods.ALL = node.handlers[handlerIdx];
+            if (handler.method === undefined) {
+              allowedMethods.ALL = handler;
               allowedMethods.ALL.params = params;
             } else {
-              allowedMethods[node.handlers[handlerIdx].method] = node.handlers[handlerIdx];
-              allowedMethods[node.handlers[handlerIdx].method].params = params;
+              allowedMethods[handler.method] = handler;
+              allowedMethods[handler.method].params = params;
             }
           }
-        }
+        });
       }
-    }
+    });
     //    console.log(params)
     //    console.log("=============================")
     if (requestMethod in allowedMethods) {
       return [true, allowedMethods[requestMethod].params, allowedMethods[requestMethod].handler];
-    } 
+    }
     if ('ALL' in allowedMethods) {
       return [true, allowedMethods.ALL.params, allowedMethods.ALL.handler];
     }
